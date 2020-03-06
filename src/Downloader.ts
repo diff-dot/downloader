@@ -1,6 +1,7 @@
 import request from 'request';
 import fs from 'fs';
 import tmp from 'tmp-promise';
+import { RemoteFileNotFoundError } from './error/RemoteFileNotFoundError';
 
 const DOWNLOAD_TIMEOUT = 3000;
 
@@ -22,6 +23,11 @@ export class Downloader {
             encoding: null,
             timeout: this.timeout
           })
+            .on('response', response => {
+              if (response.statusCode === 404) {
+                reject(new RemoteFileNotFoundError(srcUri));
+              }
+            })
             .on('error', err => {
               reject(err);
             })

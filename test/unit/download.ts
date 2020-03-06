@@ -1,7 +1,8 @@
 import { expect } from 'chai';
-import { Downloader } from '../../src/Downlaoder';
+import { Downloader } from '../../src/Downloader';
 import { promisify } from 'util';
 import fs from 'fs';
+import { RemoteFileNotFoundError } from '../../src/error/RemoteFileNotFoundError';
 
 function isJpeg(buffer: Buffer): boolean {
   if (!buffer || buffer.length < 3) {
@@ -12,13 +13,25 @@ function isJpeg(buffer: Buffer): boolean {
 }
 
 let tmpPath: string;
-describe('downloader', async () => {
+
+describe('download', async () => {
   it('download remote image', async () => {
     const downloader = new Downloader();
     tmpPath = await downloader.download('https://yt3.ggpht.com/a-/AOh14GiwWzg6CLhEJU0bbBp6vfHPyJewjEUb2O2BNQ');
 
     const tmpBin = await promisify(fs.readFile)(tmpPath);
     expect(isJpeg(tmpBin)).to.be.true;
+  });
+
+  it('download malformed uri', async () => {
+    const downloader = new Downloader();
+
+    try {
+      tmpPath = await downloader.download('http://google.com/a.gif');
+      expect(true).to.be.false;
+    } catch (e) {
+      expect(e).instanceOf(RemoteFileNotFoundError);
+    }
   });
 
   after(async () => {
