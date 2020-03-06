@@ -1,6 +1,6 @@
 {
   "name": "@diff./downloader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,6 +25,7 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^13.7.7",
     "@types/request": "^2.48.4",
+    "@types/tmp": "^0.1.0",
     "@typescript-eslint/eslint-plugin": "^2.12.0",
     "@typescript-eslint/parser": "^1.13.0",
     "@typescript-eslint/typescript-estree": "^1.13.0",
