@@ -44,13 +44,33 @@ export class Downloader {
               reject(err);
             })
             .on('complete', () => {
-              resolve(tmpPath);
+              // flush
+              this.fdatasync(tmpPath)
+                .then(() => {
+                  resolve(tmpPath);
+                })
+                .catch(e => {
+                  reject(e);
+                });
             })
             .pipe(file);
         })
         .catch(e => {
           reject(e);
         });
+    });
+  }
+
+  private fdatasync(path: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.open(path, 'a+', (err, fd) => {
+        if (err) return reject(err);
+
+        fs.fdatasync(fd, err => {
+          if (err) return reject(err);
+          resolve();
+        });
+      });
     });
   }
 }
