@@ -13,6 +13,18 @@ export class Downloader {
     this.timeout = timeout;
   }
 
+  public size(srcUri: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      request.head(srcUri, { followAllRedirects: true, followOriginalHttpMethod: true }, (err, res) => {
+        if (err) return reject(err);
+
+        const contentLength = parseInt(res.caseless.get('content-length'));
+        if (isNaN(contentLength)) throw new Error('Cannot get size of remote file : ' + srcUri);
+        return resolve(contentLength);
+      });
+    });
+  }
+
   public download(srcUri: string): Promise<string> {
     return new Promise((resolve, reject) => {
       tmp
