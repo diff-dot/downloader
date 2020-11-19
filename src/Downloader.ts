@@ -17,9 +17,13 @@ export class Downloader {
     return new Promise((resolve, reject) => {
       request.head(srcUri, { followAllRedirects: true, followOriginalHttpMethod: true }, (err, res) => {
         if (err) return reject(err);
+        // 상태 코드 확인
+        if (res.statusCode !== 200) throw new Error(`Cannot get size of remote file (code: ${res.statusCode}) : ${srcUri}`);
 
+        // 헤더 추출
         const contentLength = parseInt(res.caseless.get('content-length'));
-        if (isNaN(contentLength)) throw new Error('Cannot get size of remote file : ' + srcUri);
+        if (isNaN(contentLength)) throw new Error(`Cannot get size of remote file (invalid content-length header) : ${srcUri}`);
+
         return resolve(contentLength);
       });
     });
