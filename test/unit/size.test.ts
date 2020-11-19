@@ -1,3 +1,4 @@
+import { fail } from 'assert';
 import { expect } from 'chai';
 import fs from 'fs';
 import { promisify } from 'util';
@@ -18,5 +19,15 @@ describe('download', async () => {
 
     // 같아야 하느니라
     expect(size).to.be.eq(tmpFileStat.size);
+  });
+
+  it('에러 페이지 접속시 에러 반환', async () => {
+    const downloader = new Downloader();
+
+    // 원격지 파일 크기 확인
+    try {
+      await downloader.size('https://yt3.ggpht.com/a-/AOh14Gg4ktzcdooJKkDSnXCq6npjpp-zLWgYeofd_A=s68-c-k-c0x00ffffff-no-rj-mo');
+      fail();
+    } catch (e) {}
   });
 });
